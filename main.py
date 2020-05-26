@@ -14,12 +14,12 @@ def extractJobElement(soupObject, elementToExtract):
 
 if __name__ == "__main__":
 
-    for page in range(0, 200, 10):
+    # Set up Attribute list and DataFrame
+    attributeList = ["jobtitle" , "location", "company", "salary", "sponsoredGray"]
+    df = pd.DataFrame(columns=["Title", "Location", "Company", "Salary", "Sponsored", "Description"])
 
-        # Set up Attribute list and DataFrame
-        attributeList = ["jobtitle" , "location", "company", "salary", "sponsoredGray"]
-        df = pd.DataFrame(columns=["Title", "Location", "Company", "Salary", "Sponsored", "Description"])
-        
+    for page in range(0, 500, 10):
+
         # Set up Selenium driver
         driver = webdriver.Chrome("./chromedriver")
         driver.implicitly_wait(4)
@@ -68,6 +68,7 @@ if __name__ == "__main__":
                 jobEntry['Description'] = description
 
                 # Appends current post to DataFrame
+                print
                 df = df.append(jobEntry, ignore_index=True)
             except:
                 print("Error with this listing!")

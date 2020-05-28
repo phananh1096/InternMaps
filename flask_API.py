@@ -1,17 +1,27 @@
 # Methodology adapted from Melvin L
-from flask import Flask, request
+from flask import Flask,jsonify,  request
 from flask_restful import Resource, Api
+from main import JobSearch
 
 app = Flask(__name__)
 api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        return {"about":"Hello World!"}
+        # return {"about":"Hello World!"}
+        newSearch = JobSearch()
+        results = newSearch.search("Tester", "MA 02155", "10")
+        results.to_csv("./data/testFlask.csv", index=False)
+        print(results.to_json)
+        # return {"you sent": someJson}, 201
+        return {"status": "Done!"}, 201
     
     def post(self): 
-        someJson = request.get_json()
-        return {"you sent": someJson}, 201
+        newSearch = JobSearch()
+        results = newSearch.search("Tester", "MA 02155", "10")
+        results.to_csv("./data/testFlask.csv", index=False)
+        # return {"you sent": someJson}, 201
+        return jsonify(results), 201
     
 class Multi(Resource):
     def get(self, num):

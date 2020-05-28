@@ -6,6 +6,29 @@ import sys
 import requests
 import pandas as pd
 
+import googlemaps
+from datetime import datetime
+
+def testMaps():
+    APIkey = "AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8"
+
+    gmaps = googlemaps.Client(key=APIkey)
+
+    # Geocoding an address
+    geocode_result = gmaps.geocode('Jasper Apartments San Francsisco')
+    print("LongLat for your search is: ", geocode_result)
+
+    # # Look up an address with reverse geocoding
+    # reverse_geocode_result = gmaps.reverse_geocode(geocode_result)
+    # print("Reversed geocode address is: ", reverse_geocode_result)
+
+    # Request directions via public transit
+    # now = datetime.now()
+    # directions_result = gmaps.directions("Sydney Town Hall",
+    #                                     "Parramatta, NSW",
+    #                                     mode="transit",
+    #                                     departure_time=now)
+
 class JobSearch():
 
     def __init__(self):
@@ -94,6 +117,7 @@ class JobSearch():
 
 if __name__ == "__main__":
 
-    newSearch = JobSearch()
-    newSearch.search("software engineering intern", "CA 94105", "5")
+    # newSearch = JobSearch()
+    # newSearch.search("software engineering intern", "CA 94105", "5")
+    testMaps()
 

@@ -31,3 +31,7 @@ Each posting should have a summary of this information, along with direct links 
 ## Mockups
 
 TBD
+
+##Instructions
+
+1. Copy the correct version of chromedriver in "Chromedrivers" folder into this folder before running code

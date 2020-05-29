@@ -9,12 +9,19 @@ api = Api(app)
 class HelloWorld(Resource):
     def get(self):
         # return {"about":"Hello World!"}
+        args = request.args
+        jobTitle = args["title"]
+        jobLocation = args["loc"]
+        jobRadius = args["rad"]
         newSearch = JobSearch()
-        results = newSearch.search("Software Engineer Intern", "New York 10044", "2")
+        results = newSearch.search(jobTitle, jobLocation, jobRadius)
         # results.to_csv("./data/testFlask.csv", index=False)
         # print(results.to_json)
         # return {"you sent": someJson}, 201
         print(results)
+        # results.headers.add('Access-Control-Allow-Origin', '*')
+        # results.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        # results.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
         return results, 201
     
     def post(self): 

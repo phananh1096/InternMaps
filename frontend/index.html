@@ -4,13 +4,39 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>MBTA Assignment 3</title>
-    <link rel = "stylesheet" href = "mbta.css"/>
+    <link rel = "stylesheet" href = "InternMaps.css"/>
   </head>
   <body>
+    <div class="container">
+        <div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3" id="col1">
+					<!-- Select box to choose the ranking type -->
+					<form class="form-inline" >
+						<div class="form-group">
+							<form name="myform">
+								<label >Time period: </label>
+								<input type="text" id="Title" placeholder="Job Title" autocomplete="off">
+                                <input type="text" id="Location" placeholder="Location" autocomplete="off">
+                                <input type="text" id="SearchRadius" placeholder="Search Radius" autocomplete="off">
+                                <input type="text" id="Link" placeholder="API URL" autocomplete="off">
+								<input name="Submit"  type="button" value="Search" onclick="searchJobs();">
+							</form>
+						</div>
+					</form>
+                </div>
+            </div>
+        </div>  
+    </div>
     <div id="map"></div>
-    <script src="mbta.js"></script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3BuCf6q1ou25SJODSimRxPSLGWs0FesQ&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8&callback=initMap">
     </script>
+    <script src="js/main.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/d3-tip.js"></script>
   </body>
 </html>

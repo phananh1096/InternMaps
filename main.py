@@ -1,6 +1,7 @@
 # Methodology adapted from "Code Heroku"
 from selenium import webdriver
 from bs4 import BeautifulSoup
+import time
 import csv
 import sys
 import requests
@@ -9,14 +10,21 @@ import pandas as pd
 import googlemaps
 from datetime import datetime
 
-def testMaps():
+print(pd.__version__)
+
+def testMaps(CompanyName, CompanyLocation):
     APIkey = "AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8"
 
     gmaps = googlemaps.Client(key=APIkey)
 
+    addressToGet = CompanyName + ", " + CompanyLocation
+
     # Geocoding an address
-    geocode_result = gmaps.geocode('Jasper Apartments San Francsisco')
-    print("LongLat for your search is: ", geocode_result)
+    geocode_result = gmaps.geocode(addressToGet)
+    # print("LongLat for your search is: ", geocode_result)
+    # print("What you want is: ")
+    # print(geocode_result[0]['geometry']['location']["lng"], geocode_result[0]['geometry']['location']["lat"], geocode_result[0]['formatted_address'])
+    return geocode_result[0]['geometry']['location']["lng"], geocode_result[0]['geometry']['location']["lat"], geocode_result[0]['formatted_address']
 
     # # Look up an address with reverse geocoding
     # reverse_geocode_result = gmaps.reverse_geocode(geocode_result)
@@ -37,7 +45,16 @@ class JobSearch():
     def search(self, searchPosition, searchLocation, searchRadius):
         # Set up Attribute list and DataFrame
         attributeList = ["jobtitle" , "location", "company", "salary", "sponsoredGray"]
-        df = pd.DataFrame(columns=["Title", "Location", "Company", "Salary", "Sponsored", "Description"])
+        df = pd.DataFrame(columns=["Title", 
+                                "Location", 
+                                "Company", 
+                                "Salary", 
+                                "Sponsored", 
+                                "Description", 
+                                "Link",
+                                "Address",
+                                "Lng",
+                                "Lat"])
 
         # Convert search terms to url compatible format
         searchPosition = searchPosition.replace(" ", "+")
@@ -84,9 +101,21 @@ class JobSearch():
                             summary.click()
                         except:
                             pass
+
+                    # Fetches application link
+                    applyLink = "None"
+                    try:
+                        link = driver.find_element_by_link_text('Apply On Company Site')
+                        applyLink = link.get_attribute('href')
+                        # print(applyLink)
+                    except:
+                        # In case direct link to company website not available, links to indeed posting
+                        time.sleep(1)
+                        applyLink = driver.current_url
+                        # print(applyLink)
                     
                     # Tries different id keywords for job description
-                    descriptionTestKeywords = ["vjs-desc", "jobDescriptionText"]
+                    descriptionTestKeywords = ["vjs-desc", "jobDescriptionText", "jobsearch-JobComponent-embeddedBody"]
                     description = "None"
                     for keyword in descriptionTestKeywords:
                         try:
@@ -94,19 +123,32 @@ class JobSearch():
                             break
                         except:
                             pass
-
-                    jobEntry['Description'] = description
+                    
+                    # Appends job link and description to jobEntry
+                    jobEntry["Link"] = applyLink
+                    jobEntry["Description"] = description
+        
+                    # Tests Map Call functionality
+                    longitude = latitude = address = "None" 
+                    
+                    try:
+                        longitude,latitude, address = testMaps(jobEntry["Company"], jobEntry["Location"])
+                        jobEntry["Lng"] = longitude
+                        jobEntry["Lat"] = latitude
+                        jobEntry["Address"] = address
+                    except:
+                        print("Failed to get long, lat!")
+                        pass
 
                     # Appends current post to DataFrame
-                    print
                     df = df.append(jobEntry, ignore_index=True)
                 except:
                     print("Error with this listing!")
                     pass        
-
         # Exports to CSV
-        # df.to_csv("./data/testFlask.csv", index=False)
-        return df
+        df.to_csv("./data/testFlask.csv", index=False)
+        print(df.to_json())
+        return df.to_json()
 
     def extractJobElement(self,soupObject, elementToExtract):
         try: 
@@ -117,7 +159,7 @@ class JobSearch():
 
 if __name__ == "__main__":
 
-    # newSearch = JobSearch()
-    # newSearch.search("software engineering intern", "CA 94105", "5")
-    testMaps()
+    newSearch = JobSearch()
+    newSearch.search("software engineering intern", "CA 94105", "5")
+    # testMaps()
 

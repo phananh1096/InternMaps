@@ -10,11 +10,12 @@ class HelloWorld(Resource):
     def get(self):
         # return {"about":"Hello World!"}
         newSearch = JobSearch()
-        results = newSearch.search("Tester", "MA 02155", "10")
-        results.to_csv("./data/testFlask.csv", index=False)
-        print(results.to_json)
+        results = newSearch.search("Software Engineer Intern", "New York 10044", "2")
+        # results.to_csv("./data/testFlask.csv", index=False)
+        # print(results.to_json)
         # return {"you sent": someJson}, 201
-        return {"status": "Done!"}, 201
+        print(results)
+        return results, 201
     
     def post(self): 
         newSearch = JobSearch()

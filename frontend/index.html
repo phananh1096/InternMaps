@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>MBTA Assignment 3</title>
+    <title>InternMaps</title>
     <link rel = "stylesheet" href = "InternMaps.css"/>
   </head>
   <body>
@@ -15,12 +15,12 @@
 					<form class="form-inline" >
 						<div class="form-group">
 							<form name="myform">
-								<label >Time period: </label>
+								<label >Job Details: </label>
 								<input type="text" id="Title" placeholder="Job Title" autocomplete="off">
                                 <input type="text" id="Location" placeholder="Location" autocomplete="off">
-                                <input type="text" id="SearchRadius" placeholder="Search Radius" autocomplete="off">
+                                <input type="text" id="SearchRadius" placeholder="Search Radius (miles)" autocomplete="off">
                                 <input type="text" id="Link" placeholder="API URL" autocomplete="off">
-								<input name="Submit"  type="button" value="Search" onclick="searchJobs();">
+								<input name="Submit" id="Submit" type="button" value="Search" onclick="searchJobs(map)">
 							</form>
 						</div>
 					</form>

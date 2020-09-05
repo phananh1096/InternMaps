@@ -2,8 +2,12 @@
 // 1. Renders polyline
 // 2. Creates markers
 // 3. Locates user via navigator geolocation object
+// var map = initMap(map)
+
+var map;
+
 function initMap() {
-          var map = new google.maps.Map(document.getElementById('map'), {
+          map = new google.maps.Map(document.getElementById('map'), {
             zoom: 14,
             center: {lat: 42.352271, lng: -71.05524200000001},
             mapTypeId: 'terrain'
@@ -11,6 +15,12 @@ function initMap() {
           // setpolyline(map);
           // setMarkers(map);
           locate_me(map);
+        //   _this.data
+        //   searchButton = document.getElementById('Submit')
+        //   searchButton.addEventListener('click', function(map){
+        //     searchJobs(map)
+        //   })
+        //   return(map)
 }
 
 // ******** DETERMINE CURRENT LOCATION ********
@@ -33,6 +43,7 @@ function locate_me(map) {
                 lat = position.coords.latitude;
                 long = position.coords.longitude;
                 map.setCenter(new google.maps.LatLng(lat,long));
+                // console.log(lat, long)
                 var loc_marker = new google.maps.Marker({
                         position: {lat:lat,lng:long},
                         map: map,
@@ -55,45 +66,12 @@ function searchJobs() {
     jobLocation = d3.select("#Location").property("value");
     jobRadius = d3.select("#SearchRadius").property("value");
     console.log(jobTitle, jobLocation, jobRadius)
-    makeinfowindow(jobTitle, jobLocation, jobRadius)
+    makeSeleniumCall(jobTitle, jobLocation, jobRadius)
 }
 
 
-// // Function that sets the polyline
-// function setpolyline (map) {
-//           // Script for the polyline
-//           var flightPlanCoordinates = [
-//             {lat: stations[11][1], lng: stations[11][2]}, {lat: stations[10][1], lng: stations[10][2]}, {lat: stations[2][1], lng: stations[2][2]},
-//             {lat: stations[3][1], lng: stations[3][2]}, {lat: stations[20][1], lng: stations[20][2]}, {lat: stations[12][1], lng: stations[12][2]},
-//             {lat: stations[13][1], lng: stations[13][2]}, {lat: stations[6][1], lng: stations[6][2]}, {lat: stations[14][1], lng: stations[14][2]},
-//             {lat: stations[0][1], lng: stations[0][2]}, {lat: stations[7][1], lng: stations[7][2]}, {lat: stations[1][1], lng: stations[1][2]},
-//             {lat: stations[4][1], lng: stations[4][2]},
-//             // Up to JFK/UMASS
-//             {lat: stations[8][1], lng: stations[8][2]}, {lat: stations[18][1], lng: stations[18][2]}, {lat: stations[15][1], lng: stations[15][2]},
-//             {lat: stations[16][1], lng: stations[16][2]}, {lat: stations[21][1], lng: stations[21][2]},
-//             // Going back up to JFK UMASS
-//             {lat: stations[16][1], lng: stations[16][2]}, {lat: stations[15][1], lng: stations[15][2]}, {lat: stations[18][1], lng: stations[18][2]},
-//             {lat: stations[8][1], lng: stations[8][2]}, {lat: stations[4][1], lng: stations[4][2]},
-
-//             // End of one fork
-//             {lat: stations[5][1], lng: stations[5][2]}, {lat: stations[19][1], lng: stations[19][2]}, {lat: stations[9][1], lng: stations[9][2]},
-//             {lat: stations[17][1], lng: stations[17][2]},
-//           ];
-
-//           var flightPath = new google.maps.Polyline({
-//             path: flightPlanCoordinates,
-//             geodesic: true,
-//             strokeColor: '#FF0000',
-//             strokeOpacity: 1.0,
-//             strokeWeight: 2
-//           });
-
-//           flightPath.setMap(map);
-// }
-
-
 // Functiont that sets the train markers
-function setMarkers(map) {
+function setMarkers(map, company_data) {
           var icon = {
               url: "MBTA.png",
               scaledSize: new google.maps.Size(20, 20), 
@@ -104,23 +82,27 @@ function setMarkers(map) {
             coords: [1, 1, 1, 20, 18, 20, 18, 1],
             type: 'poly'
           };
-          for (var i = 0; i < stations.length; i++) {
-            var station = stations[i];
+        
+        // map.setCenter(new google.maps.LatLng(company_data["center"]["Lat"],["center"]["Lng"]));
+        //   num_jobs = Object.keys(company_data).length
+        for (var i = 0; i < Object.keys(company_data).length; i++) {
+            // console.log("Title:" + company_data[i]["Title"])
+            // console.log("Lat:" + company_data[i]["Lat"], "Lng:" + company_data[i].Lng)
+            var station = company_data.Title;
             var marker = new google.maps.Marker({
-              position: {lat: station[1], lng: station[2]},
+              position: {lat: company_data[i].Lat, lng: company_data[i].Lng},
               map: map,
-              icon: icon,
-              shape: shape,
-              title: station[0],
-              zIndex: station[3]
+            //   icon: icon,
+            //   shape: shape,
+              title: company_data[i].Title,
             });
             // Passed into function for closure
-            pass_into_listener(station, marker);
-          }
+            pass_into_listener(company_data[i], marker);
+        }
 }
 
 // Function that renders infowindow when marker is clicked
-function makeinfowindow(jobTitle, jobLocation, jobRadius) {
+function makeSeleniumCall(jobTitle, jobLocation, jobRadius) {
     // Temp link
     var link = d3.select("#Link").property("value") + "?title=" + jobTitle + "&loc=" + jobLocation + "&rad=" + jobRadius
     // var link = "https://chicken-of-the-sea.herokuapp.com/redline/schedule.json?stop_id=" + station[4];
@@ -130,15 +112,46 @@ function makeinfowindow(jobTitle, jobLocation, jobRadius) {
     request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 201) {
             data = request.responseText;
-            consolg.log("Got Data, now parsing")
-            station_data = JSON.parse(data);
-            console.log(station_data)
+            console.log("Got Data, now parsing")
+            company_data = JSON.parse(JSON.parse(data));
+            // print("Length is: " + company_data.length)
+            // console.log(company_data)
+            // console.log(company_data)
+            // console.log(Object.keys(company_data))
+            // ***** Makes call to centralize Map View
+            APIkey = "AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8"
+            gmapsLink = "https://maps.googleapis.com/maps/api/geocode/json?address=" + jobLocation + "&key=" + APIkey
+            console.log(gmapsLink)
+            centralize = new XMLHttpRequest();
+            centralize.open ('GET', gmapsLink, true);
+            centralize.send();
+            centralize.onreadystatechange =function() {
+                if (centralize.readyState == 4 && centralize.status >= 200 && centralize.status < 210) {
+                    mapsData = centralize.responseText;
+                    console.log("Got GMaps Data!!!!, Data is:")
+                    console.log(mapsData);
+                    gmaps_data = JSON.parse(mapsData);
+                    console.log(gmaps_data);
+                    var updatedLat = gmaps_data["results"][0]['geometry']['location']["lat"];
+                    var updatedLng = gmaps_data["results"][0]['geometry']['location']["lng"];
+                    map.setCenter(new google.maps.LatLng(updatedLat,updatedLng));
+                    map.setZoom(11);
+                }
+                if (centralize.readyState != 4 || (centralize.status < 200 || centralize.status > 210)) {
+                    console.log(centralize.readyState, centralize.status)
+                    console.log("Fetching Gmaps data...")
+                }
+            }
+            // centerCoords =function()
+            // *****
+
+            setMarkers(map, company_data)
             // var info_w = new google.maps.InfoWindow();
             // info_w.setContent(getTimes(station_data,station[0]));
             // info_w.open(map,curr_mark);
         }
         if (request.readyState != 4 || request.status != 201) {
-            console.log("Something's wrong..")
+            console.log("Fetching data...")
             // var info_w = new google.maps.InfoWindow();
             // info_w.setContent(getTimes(station_data,station[0]));
             // info_w.open(map,curr_mark);
@@ -146,67 +159,22 @@ function makeinfowindow(jobTitle, jobLocation, jobRadius) {
     }
 }
 
-// function pass_into_listener(station, marker) {
-//           google.maps.event.addListener(marker, 'click', function() {
-//           makeinfowindow(station, marker);
-//           });
-//  }
+// Add event listener for markers
+function pass_into_listener(station, marker) {
+    google.maps.event.addListener(marker, 'click', function() {
+    makeinfowindow(station, marker);
+    });
+ }
 
-// function getTimes(station_data, station_name) {
-//           var time = '<h1>Sorry, station data not available </h1>';
-//           // Checks for wollaston edge case: 
-//           if (station_data.data.length == 0) {
-//             return time;
-//           }
-//           // gets 4 latest schedules
-//           var arrive;
-//           var depart;
-//           var trains = [[0,0],[0,0],['TBD','TBD'],['TBD','TBD']];
-//           var direction = ['Unavailable', 'Unavailable', 'Unavailable', 'Unavailable'];
-//           for (var i = 0; i < 4; i++) {
-//             if (i == station_data.data.length) {
-//               break;
-//             }
-//             else {
-//               arrive = station_data.data[i].attributes.arrival_time;
-//               depart = station_data.data[i].attributes.departure_time;
-//               if (arrive != null && depart != null) {
-//                 arrive = arrive.substring(11,16);
-//                 trains[i][0] = arrive;
-//                 depart = depart.substring(11,16);
-//                 trains[i][1] = depart;
-//               }
-//               else if (arrive == null && depart != null) {
-//                 trains[i][0] = 'Not available';
-//                 depart = depart.substring(11,16);
-//                 trains[i][1] = depart;
-//               }
-//               else if (depart == null && arrive != null) {
-//                 arrive = arrive.substring(11,16);
-//                 trains[i][0] = arrive;
-//                 trains[i][1] = 'Not available';
-//               }  
-//               else {
-//                   trains[i][0] = 'Not available'; 
-//                   trains[i][1] = 'Not available'; 
-//               }
-//             }
-//           }
-//           for (var i = 0; i < 4; i++) {
-//             if (station_data.data[i].attributes.direction_id == '0')
-//               direction[i] = 'Southbound (to Ashmont/Braintree)';
-//             else 
-//               direction[i] = 'Northbound (to Alewife)';
-//           }
-//           time = '<h1> Station: ' + station_name + '</h1>' + '<table>' + '<tr>' + '<th> Arrival time</th>' + '<th> Departure time</th>' + '<th> Direction</th>' + '</tr>' +
-//                 '<tr>' + '<td>' + trains[0][0] + '</td>' + '<td>' + trains[0][1] + '</td>' + '<td>' + direction[0] + '</td>' + 
-//                 '<tr>' + '<td>' + trains[1][0] + '</td>' + '<td>' + trains[1][1] + '</td>' + '<td>' + direction[1] + '</td>' + 
-//                 '<tr>' + '<td>' + trains[2][0] + '</td>' + '<td>' + trains[2][1] + '</td>' + '<td>' + direction[2] + '</td>' + 
-//                 '<tr>' + '<td>' + trains[3][0] + '</td>' + '<td>' + trains[3][1] + '</td>' + '<td>' + direction[3] + '</td>' + '</table>';
-//           return time;
-// }
+// Helper function to generate info window for marker
+function makeinfowindow(station, marker) {
+    var info_w = new google.maps.InfoWindow();
+        var detailedInfo = '<h1><b>Posting</b>: ' + station["Title"] + '</h1>' + '<h1><b>Company<b/>: ' + station["Company"] + '</h1>'
+                        + '<h1><b>Description</b>: ' + station["Description"] + '</h1>' + '<h1><b>Link<b/>: ' + station["Link"] + '</h1>';
+        info_w.setContent(detailedInfo);
+        // getTimes method: 
+        info_w.open(map,marker);
+}
 
-
-
-
-
+// Helper function to centralize Google Maps View
+// function centralize()

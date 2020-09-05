@@ -2,7 +2,7 @@
 
 ## Idea
 
-To visualize internship postings by location using Google Maps API and data scraped from Glassdoor/Indeed
+To visualize internship postings by location using Google Maps API and data scraped from Indeed
 
 ## Problem statement
 
@@ -22,11 +22,11 @@ Each posting should have a summary of this information, along with direct links 
 
 ## Data
 
-1. Data scraped from Glassdoor/Indeed using Puppeteer
+1. Data scraped from Glassdoor/Indeed using Selenium
 
 ## Algorithms and Technologies
 
-1. Tech stack TBD
+1. Flask API used for 
 
 ## Mockups
 

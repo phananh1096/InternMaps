@@ -25,7 +25,7 @@ from datetime import datetime
 # **** End of Heroku Setup ****
 
 def testMaps(CompanyName=None, CompanyLocation=None):
-    APIkey = "AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8"
+    APIkey = "*** API KEY ***"
 
     gmaps = googlemaps.Client(key=APIkey)
 

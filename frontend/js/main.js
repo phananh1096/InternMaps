@@ -119,7 +119,7 @@ function makeSeleniumCall(jobTitle, jobLocation, jobRadius) {
             // console.log(company_data)
             // console.log(Object.keys(company_data))
             // ***** Makes call to centralize Map View
-            APIkey = "AIzaSyAn2aGy_mPi-cr-bOopwYzEr2r1athMKJ8"
+            APIkey = "***API KEY***"
             gmapsLink = "https://maps.googleapis.com/maps/api/geocode/json?address=" + jobLocation + "&key=" + APIkey
             console.log(gmapsLink)
             centralize = new XMLHttpRequest();
